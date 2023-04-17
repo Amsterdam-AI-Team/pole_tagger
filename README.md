@@ -1,4 +1,4 @@
-# Pole Tagger: Code to annotate extracted poles
+# Pole Tagger: Code to annotate extracted street lights
 
 This repository contains a Python implementation of a pole tagger to annotate semantically segmented street lights in point clouds. 
 
