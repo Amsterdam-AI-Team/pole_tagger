@@ -125,6 +125,8 @@ def determine_pole_type(type_classifier, obj):
         # Load street light type
         cv2.namedWindow("pole type")
         type_img = cv2.imread('data/images/types/{}.png'.format(str(idxs_prob)))
+	h, w, _ = type_img.shape
+        type_img = cv2.resize(type_img, (int(w*0.7), int(h*0.7)))  
         cv2.imshow('pole type', type_img)
 
         # The function waitKey waits for a key event infinitely (when delay<=0)
@@ -179,6 +181,7 @@ def check_poles(in_folder, in_folder_imgs, csv_poles, out_file):
             # Load segmenatation example
             if os.path.exists(img_name):
                 img = cv2.imread(img_name)
+		img = cv2.resize(img, (900, 400))
                 cv2.moveWindow("check poles", 550, 100)
                 cv2.imshow('check poles', img)
 
