@@ -26,7 +26,7 @@ The data folder contains a csv and images subfolder:
 ## Usage
 
 
-- Start up the tagger:
+- Start up the tagger (this might take a minute if you start it up for the first time):
 
   ```sh
   python3 pole_tagger.py
