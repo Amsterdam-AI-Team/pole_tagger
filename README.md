@@ -31,4 +31,4 @@ The data folder contains a csv and images subfolder:
   ```sh
   python3 pole_tagger.py
   ```
-A detailed manual of the tagger can be found in the 'pole tagger manual.pdf' file.
+A detailed manual of the tagger including some annotation examples can be found in the 'pole tagger manual.pdf' file. Furthermore, some example images have been added to this repository to get to understand the pole tagger tool.
