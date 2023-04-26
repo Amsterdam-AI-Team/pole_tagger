@@ -141,7 +141,7 @@ def determine_pole_type(type_classifier, obj):
 
         # The function waitKey waits for a key event infinitely (when delay<=0)
         k = None
-        while k not in [106, 102, 49, 127]:
+        while k not in [106, 102, 49, 8, 127]:
             k = cv2.waitKey(0)
             if k == 106:  # [j] if type is correct
                 obj['type'] = idxs_prob
@@ -153,7 +153,7 @@ def determine_pole_type(type_classifier, obj):
                 obj['type'] = 99
                 cv2.destroyWindow("pole type")
                 return obj
-            elif k == 127 and i != 0:  # [backspace] go to previous type
+            elif (k == 8 or k == 127) and i != 0:  # [backspace] go to previous type
                 i -= 1
             else:
                 print('Key not valid...')
@@ -199,7 +199,7 @@ def check_poles(in_folder, in_folder_imgs, csv_poles, out_file):
 
                 # The function waitKey waits for a key event infinitely (when delay<=0)
                 k, back = None, False
-                while k not in [106, 99, 105, 110, 127, 27]:
+                while k not in [106, 99, 105, 110, 8, 127, 27]:
                     k = cv2.waitKey(0)
                     if k == 106:  # [j]: next image
                         obj['code'] = 0
@@ -215,7 +215,7 @@ def check_poles(in_folder, in_folder_imgs, csv_poles, out_file):
                     elif k == 110:  # [n] unclear/more than one pole
                         obj['code'] = 3
                         continue
-                    elif k == 127 and idx > 0:  # [backspace] to go back one example
+                    elif (k == 8 or k == 127) and idx > 0:  # [backspace] to go back one example
                         df_poles_adjusted.loc[idx - 1, 'code'] = -1
                         idx -= 2
                         back = True
