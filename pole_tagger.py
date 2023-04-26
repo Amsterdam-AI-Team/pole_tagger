@@ -142,19 +142,19 @@ def determine_pole_type(type_classifier, obj):
 
         # The function waitKey waits for a key event infinitely (when delay<=0)
         k = None
-        while k not in [106, 102, 49, 8, 127]:
+        while k not in [106, 83, 102, 49, 81, 8, 127]:
             k = cv2.waitKey(0)
             if k == 106:  # [j] if type is correct
                 obj['type'] = idxs_prob
                 cv2.destroyWindow("pole type")
                 return obj
-            elif k == 102:  # [f] go to next type
+            elif k == 83 or k == 102:  # [f] or [>] go to next type
                 i += 1
             elif k == 49:  # [1] type is unkown
                 obj['type'] = 99
                 cv2.destroyWindow("pole type")
                 return obj
-            elif (k == 8 or k == 127) and i != 0:  # [backspace] go to previous type
+            elif k in [81, 8, 127] and i != 0:  # [backspace] or [>] go to previous type
                 i -= 1
             else:
                 print('Key not valid...')
