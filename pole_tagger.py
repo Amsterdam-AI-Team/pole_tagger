@@ -150,11 +150,11 @@ def determine_pole_type(type_classifier, obj):
                 return obj
             elif k == 83 or k == 102:  # [f] or [>] go to next type
                 i += 1
-            elif k == 49:  # [1] type is unkown
+            elif k == 49:  # [1] type is unknown
                 obj['type'] = 99
                 cv2.destroyWindow("pole type")
                 return obj
-            elif k in [81, 8, 127] and i != 0:  # [backspace] or [>] go to previous type
+            elif k in [81, 8, 127] and i != 0:  # [backspace] or [<] go to previous type
                 i -= 1
             else:
                 print('Key not valid...')
@@ -188,10 +188,10 @@ def check_poles(in_folder, in_folder_imgs, csv_poles, out_file):
     while idx < len(df_poles):
         obj = df_poles.iloc[idx]
         if df_poles_adjusted.loc[idx, 'code'] < 0 or np.isnan(
-                df_poles_adjusted.loc[idx, 'code']) == True:
+                df_poles_adjusted.loc[idx, 'code']) is True:
             img_name = in_folder_imgs + 'object_all_axes/' + str(idx) + '.png'
 
-            # Load segmenatation example
+            # Load segmentation example
             if os.path.exists(img_name):
                 img = cv2.imread(img_name)
                 img = cv2.resize(img, (900, 400))
@@ -226,7 +226,7 @@ def check_poles(in_folder, in_folder_imgs, csv_poles, out_file):
                     else:
                         print('Key not valid...')
 
-                if back == False:
+                if back is False:
                     df_poles_adjusted.loc[idx] = obj
                 df_poles_adjusted.to_csv(in_folder + out_file, index=False)
 
