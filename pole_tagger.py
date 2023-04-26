@@ -134,6 +134,7 @@ def determine_pole_type(type_classifier, obj):
 
         # Load street light type
         cv2.namedWindow("pole type")
+        cv2.setWindowTitle("pole type", f"Pole type {idxs_prob}")
         type_img = cv2.imread('data/images/types/{}.png'.format(str(idxs_prob)))
         h, w, _ = type_img.shape
         type_img = cv2.resize(type_img, (int(w * 0.7), int(h * 0.7)))
@@ -195,6 +196,7 @@ def check_poles(in_folder, in_folder_imgs, csv_poles, out_file):
                 img = cv2.imread(img_name)
                 img = cv2.resize(img, (900, 400))
                 cv2.moveWindow("check poles", 550, 100)
+                cv2.setWindowTitle("check poles", f"Check pole {idx}")
                 cv2.imshow('check poles', img)
 
                 # The function waitKey waits for a key event infinitely (when delay<=0)
