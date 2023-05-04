@@ -358,14 +358,10 @@ if __name__ == "__main__":
         print('Select one of the following options: --validate_pole --adjust_fit --validate_type')
         sys.exit(1)
 
-    # in_out_folder_csv = 'data/csv_files/'
-    # in_folder_images = 'data/images/objects/'
-    # csv_poles = 'extracted_poles.csv'
-    # out_file = 'extracted_poles_checked.csv'
-    in_out_folder_csv = 'data/csv_files/street_lights_train-val_oost/predicted/'
-    in_folder_images = 'data/images/street_lights_train-val_oost/predicted/'
-    csv_poles = 'poles_extracted_150_0.1.csv'
-    out_file = 'poles_extracted_150_0.1_checked.csv'
+    in_out_folder_csv = 'data/csv_files/'
+    in_folder_images = 'data/images/objects/'
+    csv_poles = 'extracted_poles.csv'
+    out_file = 'extracted_poles_checked.csv'
 
     if args.validate_pole:
         validate_poles(in_out_folder_csv, in_folder_images, csv_poles, out_file)
