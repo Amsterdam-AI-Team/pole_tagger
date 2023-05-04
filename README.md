@@ -25,10 +25,38 @@ The data folder contains a csv and images subfolder:
 
 ## Usage
 
-
-- Start up the tagger (this might take a minute if you start it up for the first time):
-
+- The tagger can be utilized with three different command line arguments:
   ```sh
-  python3 pole_tagger.py
+  python3 pole_tagger.py --validate_pole
   ```
-A detailed manual of the tagger including some annotation examples can be found in the 'pole tagger manual.pdf' file. Furthermore, some example images have been added to this repository to get to understand the pole tagger tool.
+  
+The --validate_pole argument allows to label each example. The following options are available: 
+- True Positive ([>], [enter], [space] or [1])
+- False Positive ([f] or [2])
+- True Positive that needs a correction ([c] or [3])
+- Unclear example ([u] or [4])
+- Previous example ([>] or [backspace])
+- Exit the program ([escape])
+  
+  ```sh
+  python3 pole_tagger.py --adjust_fit
+  ```
+The --adjust_fit argument allows to refit the street light with a red line by first clicking on the bottom point and subsequently on top point. Subsequently the fitted line appears in red. The following options are then available: 
+- Correct fitting ([enter] or[space])
+- Incorrect fitting (any other key). This allows you to redo the fitting.
+- Exit the program ([escape])
+  
+  ```sh
+  python3 pole_tagger.py --validate_type
+  ```
+The --validate_type argument allows to determine the street light type of each street light. Two windows will pop up if this argument is passed. On the left: the predicted type, on the right: the street light to assign which needs a type assignment. The following options are available:
+- Correct predicted type ([enter])
+- Go to next type ([>])
+- Go to previous type ([<])
+- Type is unkown or unclear ([1])
+- Exit the program ([escape])
+
+
+NOTE: You need to validate poles using the --validate_pole argument before you can use the --adjust_fit and --validate_type arguments.
+
+Some example images have been added to this repository to get to understand the pole tagger tool.
