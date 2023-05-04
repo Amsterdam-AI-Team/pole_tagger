@@ -35,7 +35,7 @@ The --validate_pole argument allows to label each example. The following options
 - False Positive ([f] or [2])
 - True Positive that needs a correction ([c] or [3])
 - Unclear example ([u] or [4])
-- Previous example ([>] or [backspace])
+- Previous example ([<] or [backspace])
 - Exit the program ([escape])
   
   ```sh
