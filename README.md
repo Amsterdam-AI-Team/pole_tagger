@@ -54,6 +54,7 @@ The --validate_type argument allows to determine the street light type of each s
 - Go to next type ([>])
 - Go to previous type ([<])
 - Type is unkown or unclear ([1])
+- Go to previous street light example ([backspace])
 - Exit the program ([escape])
 
 
