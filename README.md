@@ -31,11 +31,11 @@ The data folder contains a csv and images subfolder:
   ```
   
 The --validate_pole argument allows to label each example. The following options are available: 
-- True Positive ([>], [enter], [space] or [1])
+- True Positive ([→], [enter], [space] or [1])
 - False Positive ([f] or [2])
 - True Positive that needs a correction ([c] or [3])
 - Unclear example ([u] or [4])
-- Previous example ([<] or [backspace])
+- Previous example ([←] or [backspace])
 - Exit the program ([escape])
   
   ```sh
@@ -51,8 +51,8 @@ The --adjust_fit argument allows to refit the street light with a red line by fi
   ```
 The --validate_type argument allows to determine the street light type of each street light. Two windows will pop up if this argument is passed. On the left: the predicted type, on the right: the street light to assign which needs a type assignment. The following options are available:
 - Correct predicted type ([enter])
-- Go to next type ([>])
-- Go to previous type ([<])
+- Go to next type ([→])
+- Go to previous type ([←])
 - Type is unkown or unclear ([1])
 - Go to previous street light example ([backspace])
 - Exit the program ([escape])
