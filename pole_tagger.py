@@ -1,3 +1,4 @@
+"""Street light annotation tool for type and fit"""
 # Imports
 import argparse
 import ast
@@ -56,7 +57,6 @@ def run_click_event(in_file_ax):
     cv2.moveWindow("check single pole", 250, 100)
     global refPt, img_single_axis
     refPt = []
-    correct = False
 
     # Reading the image
     img_single_axis = cv2.imread(in_file_ax)
@@ -148,7 +148,7 @@ def get_pole_type_probs(type_classifier, obj):
 
 
 # Function to iterate over street light types
-def determine_pole_type(preds, obj):
+def determine_pole_type(preds, obj):  # noqa: C901
     # Load street light type
     i = 0
     while i < len(preds):
@@ -188,7 +188,7 @@ def determine_pole_type(preds, obj):
 
 
 # Function to validate pole clusters found in segmented point clouds
-def validate_poles(in_folder, in_folder_imgs, csv_poles, out_file):
+def validate_poles(in_folder, in_folder_imgs, csv_poles, out_file):  # noqa: C901
     pd.options.mode.chained_assignment = None
     cv2.namedWindow("check poles")
     idx = 0
@@ -294,7 +294,7 @@ def adjust_fit(in_folder, in_folder_imgs, out_file):
 
 
 # Function to validate pole type
-def validate_type(in_folder, in_folder_imgs, out_file):
+def validate_type(in_folder, in_folder_imgs, out_file):  # noqa: C901
     pd.options.mode.chained_assignment = None
     cv2.namedWindow("check poles")
 
@@ -322,7 +322,7 @@ def validate_type(in_folder, in_folder_imgs, out_file):
     back = False
     while i < len(types_dict.keys()):
         key = list(types_dict.keys())[i]
-        if back == False:
+        if back is False:
             j = 0
         while j < len(types_dict[key]):
             street_light = types_dict[key][j]
@@ -355,7 +355,8 @@ def validate_type(in_folder, in_folder_imgs, out_file):
                         j -= 1
                     break
                 else:
-                    # Assign pole type probs using adjusted pole statistics and update pole in database
+                    # Assign pole type probs using adjusted pole statistics
+                    # and update pole in database
                     df_poles_adjusted.loc[idx] = obj
                     df_poles_adjusted.to_csv(in_folder + out_file, index=False)
 
@@ -367,7 +368,7 @@ def validate_type(in_folder, in_folder_imgs, out_file):
     cv2.destroyWindow("check poles")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # noqa: C901
     parser = argparse.ArgumentParser(description="RandLA-Net and SCFNet implementation.")
     parser.add_argument("--validate_pole", action="store_true", required=False)
     parser.add_argument("--adjust_fit", action="store_true", required=False)
@@ -383,23 +384,23 @@ if __name__ == "__main__":
     csv_poles = "extracted_poles.csv"
     out_file = "extracted_poles_checked.csv"
 
+    no_validated_warning = (
+        "Make sure that (some) poles are already validated using the --validate_pole argument."
+    )
+
     if args.validate_pole:
         validate_poles(in_out_folder_csv, in_folder_images, csv_poles, out_file)
 
     elif args.adjust_fit:
         try:
             adjust_fit(in_out_folder_csv, in_folder_images, out_file)
-        except:
-            print(
-                "Make sure that (some) poles are already validated using the --validate_pole argument."
-            )
+        except Exception:
+            print(no_validated_warning)
             sys.exit(1)
 
     elif args.validate_type:
         try:
             validate_type(in_out_folder_csv, in_folder_images, out_file)
-        except:
-            print(
-                "Make sure that (some) poles are already validated using the --validate_poles argument."
-            )
+        except Exception:
+            print(no_validated_warning)
             sys.exit(1)
