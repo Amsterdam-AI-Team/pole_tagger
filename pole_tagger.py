@@ -228,10 +228,10 @@ def validate_poles(in_folder_imgs, csv_poles, out_file):  # noqa: C901
 
                 # The function waitKey waits for a key event infinitely (when delay<=0)
                 k, back = None, False
-                pos_values = [13, 32, 3, 99, 102, 117, 8, 127, 2, 49, 50, 51, 52]
+                pos_values = [13, 32, 3, 99, 102, 117, 8, 127, 2, 49, 50, 51, 52, 81, 83]
                 while k not in pos_values:
                     k = cv2.waitKey(0)
-                    if k in [13, 32, 3, 81, 49]:
+                    if k in [13, 32, 3, 83, 49]:
                         # [enter] or [space] or [>] or [1]: true positive
                         obj["code"] = 0
                         obj = get_pole_type_probs(type_classifier, obj)
