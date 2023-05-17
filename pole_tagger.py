@@ -188,15 +188,15 @@ def determine_pole_type(preds, obj):  # noqa: C901
 
 
 # Function to validate pole clusters found in segmented point clouds
-def validate_poles(in_folder, in_folder_imgs, csv_poles, out_file):  # noqa: C901
+def validate_poles(in_folder_imgs, csv_poles, out_file):  # noqa: C901
     pd.options.mode.chained_assignment = None
     cv2.namedWindow("check poles")
     idx = 0
 
     # Load csv data
-    df_poles = pd.read_csv(in_folder + csv_poles)
-    if os.path.isfile(in_folder + out_file):
-        df_poles_adjusted = pd.read_csv(in_folder + out_file)
+    df_poles = pd.read_csv(csv_poles)
+    if os.path.isfile(out_file):
+        df_poles_adjusted = pd.read_csv(out_file)
         df_poles_adjusted["type"] = df_poles_adjusted["type"].astype("Int64")
     else:
         df_poles_adjusted = df_poles
@@ -206,7 +206,7 @@ def validate_poles(in_folder, in_folder_imgs, csv_poles, out_file):  # noqa: C90
         df_poles_adjusted["type_probs"] = None
         df_poles_adjusted["type_preds"] = df_poles_adjusted["type_preds"].astype("object")
         df_poles_adjusted["type_probs"] = df_poles_adjusted["type_probs"].astype("object")
-        df_poles_adjusted.to_csv(in_folder + out_file, index=False)
+        df_poles_adjusted.to_csv(out_file, index=False)
 
     # Load model
     type_classifier = xgb.XGBClassifier()
@@ -257,7 +257,7 @@ def validate_poles(in_folder, in_folder_imgs, csv_poles, out_file):  # noqa: C90
 
                 if back is False:
                     df_poles_adjusted.loc[idx] = obj
-                df_poles_adjusted.to_csv(in_folder + out_file, index=False)
+                df_poles_adjusted.to_csv(out_file, index=False)
 
         idx += 1
         if idx < 0:
@@ -265,11 +265,11 @@ def validate_poles(in_folder, in_folder_imgs, csv_poles, out_file):  # noqa: C90
 
 
 # Function to adjust fit of street light
-def adjust_fit(in_folder, in_folder_imgs, out_file):
+def adjust_fit(in_folder_imgs, out_file):
     pd.options.mode.chained_assignment = None
 
     # Load csv data and needed variables
-    df_poles_adjusted = pd.read_csv(in_folder + out_file)
+    df_poles_adjusted = pd.read_csv(out_file)
     df_poles_adjusted["type"] = df_poles_adjusted["type"].astype("Int64")
     idx = 0
 
@@ -289,17 +289,17 @@ def adjust_fit(in_folder, in_folder_imgs, out_file):
                 obj = get_pole_type_probs(type_classifier, obj)
                 df_poles_adjusted.loc[idx] = obj
                 df_poles_adjusted.loc[idx, "code"] = 4  # adjust label of corrected poles
-                df_poles_adjusted.to_csv(in_folder + out_file, index=False)
+                df_poles_adjusted.to_csv(out_file, index=False)
         idx += 1
 
 
 # Function to validate pole type
-def validate_type(in_folder, in_folder_imgs, out_file):  # noqa: C901
+def validate_type(in_folder_imgs, out_file):  # noqa: C901
     pd.options.mode.chained_assignment = None
     cv2.namedWindow("check poles")
 
     # Load csv data and needed variables
-    df_poles_adjusted = pd.read_csv(in_folder + out_file)
+    df_poles_adjusted = pd.read_csv(out_file)
     df_poles_adjusted["type"] = df_poles_adjusted["type"].astype("Int64")
     idx, types_dict = 0, {}
 
@@ -358,7 +358,7 @@ def validate_type(in_folder, in_folder_imgs, out_file):  # noqa: C901
                     # Assign pole type probs using adjusted pole statistics
                     # and update pole in database
                     df_poles_adjusted.loc[idx] = obj
-                    df_poles_adjusted.to_csv(in_folder + out_file, index=False)
+                    df_poles_adjusted.to_csv(out_file, index=False)
 
             if back is False:
                 j += 1
@@ -373,34 +373,35 @@ if __name__ == "__main__":  # noqa: C901
     parser.add_argument("--validate_pole", action="store_true", required=False)
     parser.add_argument("--adjust_fit", action="store_true", required=False)
     parser.add_argument("--validate_type", action="store_true", required=False)
+    parser.add_argument("--input_file", type=str, default="data/csv_files/extracted_poles.csv")
+    parser.add_argument("--in_folder_images", type=str, default="data/images_objects")
     args = parser.parse_args()
 
     if not args.validate_pole and not args.adjust_fit and not args.validate_type:
         print("Select one of the following options: --validate_pole --adjust_fit --validate_type")
         sys.exit(1)
 
-    in_out_folder_csv = "data/csv_files/"
-    in_folder_images = "data/images/objects/"
-    csv_poles = "extracted_poles.csv"
-    out_file = "extracted_poles_checked.csv"
+    in_folder_images = args.in_folder_images
+    csv_poles = args.input_file
+    out_file = csv_poles.replace(".csv", "_checked.csv")
 
     no_validated_warning = (
         "Make sure that (some) poles are already validated using the --validate_pole argument."
     )
 
     if args.validate_pole:
-        validate_poles(in_out_folder_csv, in_folder_images, csv_poles, out_file)
+        validate_poles(in_folder_images, csv_poles, out_file)
 
     elif args.adjust_fit:
         try:
-            adjust_fit(in_out_folder_csv, in_folder_images, out_file)
+            adjust_fit(in_folder_images, out_file)
         except Exception:
             print(no_validated_warning)
             sys.exit(1)
 
     elif args.validate_type:
         try:
-            validate_type(in_out_folder_csv, in_folder_images, out_file)
+            validate_type(in_folder_images, out_file)
         except Exception:
             print(no_validated_warning)
             sys.exit(1)
