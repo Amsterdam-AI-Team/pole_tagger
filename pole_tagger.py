@@ -52,9 +52,11 @@ def click_event(event, x, y, flags, params):
 
 
 # Function to run the click event and return the clicked coordinates
-def run_click_event(in_file_ax):
+def run_click_event(in_file_ax, window_name="check single pole"):
     cv2.namedWindow("check single pole")
     cv2.moveWindow("check single pole", 250, 100)
+    cv2.setWindowTitle("check single pole", window_name)
+
     global refPt, img_single_axis
     refPt = []
 
@@ -99,10 +101,10 @@ def adjust_pole_statistics(in_folder, idx, obj):
     max_x, max_y, max_z = float(x_v[-2]), float(y_v[-2]), float(x_v[-1])
 
     # Obtain new x,y,z in local coordinate system
-    w_x, h_x, rp_ax_x = run_click_event(in_file_ax_x)
+    w_x, h_x, rp_ax_x = run_click_event(in_file_ax_x, f"Adjust pole {idx} (x)")
     if w_x == 0:  # check if program was escaped
         return obj, True
-    w_y, h_y, rp_ax_y = run_click_event(in_file_ax_y)
+    w_y, h_y, rp_ax_y = run_click_event(in_file_ax_y, f"Adjust pole {idx} (y)")
     if w_y == 0:  # check if program was escaped
         return obj, True
 
@@ -395,13 +397,15 @@ if __name__ == "__main__":  # noqa: C901
     elif args.adjust_fit:
         try:
             adjust_fit(in_folder_images, out_file)
-        except Exception:
+        except Exception as e:
+            print(e)
             print(no_validated_warning)
             sys.exit(1)
 
     elif args.validate_type:
         try:
             validate_type(in_folder_images, out_file)
-        except Exception:
+        except Exception as e:
+            print(e)
             print(no_validated_warning)
             sys.exit(1)
