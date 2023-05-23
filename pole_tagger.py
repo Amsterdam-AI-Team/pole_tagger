@@ -90,17 +90,14 @@ def run_click_event(in_file_ax, window_name="check single pole"):
 
     # Wait for a key to be pressed to exit
     k = cv2.waitKey(0)
+    cv2.destroyWindow("check single pole")
     if k == 27:  # [esc]: escape the program
-        cv2.destroyWindow("check single pole")
         return 0, 0, 0
     elif k == 102 or k == 50:  # [f] or [2]: not a street light
-        cv2.destroyWindow("check single pole")
         return -1, -1, -1
     elif k == 13 or k == 32:  # [space] or [enter]: fit is correct
-        cv2.destroyWindow("check single pole")
         return width, height, refPt
     else:  # any other key: fit is incorrect, do refit
-        cv2.destroyWindow("check single pole")
         w, h, rp = run_click_event(in_file_ax, window_name)
         return w, h, rp
 
