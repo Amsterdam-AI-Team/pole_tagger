@@ -107,43 +107,44 @@ def run_click_event(in_file_ax, window_name="check single pole"):
 
 # Function to adjust red line if not correct
 def adjust_pole_statistics(in_folder, idx, obj):
-    in_file_ax_x = str(
-        list(pathlib.Path(in_folder + "object_per_axis/x/").glob("{}_*".format(idx)))[0]
-    )
-    in_file_ax_y = str(
-        list(pathlib.Path(in_folder + "object_per_axis/y/").glob("{}_*".format(idx)))[0]
-    )
+    in_file_ax = {
+        axis: str(
+            list(pathlib.Path(in_folder + f"object_per_axis/{axis}/").glob("{}_*".format(idx)))[0]
+        )
+        for axis in ["x", "y"]
+    }
 
     # Get global min and max in pole plot
-    x_v = in_file_ax_x[:-4].split("_")
-    y_v = in_file_ax_y[:-4].split("_")
+    x_v = in_file_ax["x"][:-4].split("_")
+    y_v = in_file_ax["y"][:-4].split("_")
     min_x, min_y, min_z = float(x_v[-4]), float(y_v[-4]), float(x_v[-3])
     max_x, max_y, max_z = float(x_v[-2]), float(y_v[-2]), float(x_v[-1])
 
-    # Obtain new x,y,z in local coordinate system
-    w_x, h_x, rp_ax_x = run_click_event(in_file_ax_x, f"Adjust pole {idx} (x)")
-    if w_x == 0:  # check if program was escaped
-        return obj, True, 0
-    elif w_x == -1:  # check if not a clear street light
-        return obj, False, -2
-    w_y, h_y, rp_ax_y = run_click_event(in_file_ax_y, f"Adjust pole {idx} (y)")
-    if w_y == 0:  # check if program was escaped
-        return obj, True, 0
-    elif w_y == -1:  # check if not a clear street light
-        return obj, False, -2
+    w, h, rp_ax = {}, {}, {}
 
-    # Swap to bottom -> top point independent of click order
-    rp_ax_x = rp_ax_x if rp_ax_x[0][1] < rp_ax_x[1][1] else [rp_ax_x[1], rp_ax_x[0]]
-    rp_ax_y = rp_ax_y if rp_ax_y[0][1] < rp_ax_y[1][1] else [rp_ax_y[1], rp_ax_y[0]]
+    # Obtain new x,y,z in local coordinate system
+    for axis in ["x", "y"]:
+        w[axis], h[axis], temp_rp_ax = run_click_event(
+            in_file_ax[axis], f"Adjust pole {idx} ({axis})"
+        )
+        if w[axis] == 0:  # check if program was escaped
+            return obj, True, 0
+        elif w[axis] == -1:  # check if not a clear street light
+            return obj, False, -2
+
+        # Swap to bottom -> top point independent of click order
+        rp_ax[axis] = (
+            temp_rp_ax if temp_rp_ax[0][1] < temp_rp_ax[1][1] else [temp_rp_ax[1], temp_rp_ax[0]]
+        )
 
     # Calculate distance per pixel local coordinate system
-    pre_rd_x, pre_t_x = rp_ax_x[0][0], rp_ax_x[1][0]
-    pre_rd_y, pre_t_y = rp_ax_y[0][0], rp_ax_y[1][0]
-    pre_rd_z = np.mean([rp_ax_x[0][1], rp_ax_y[0][1]])
-    pre_t_z = np.mean([rp_ax_x[1][1], rp_ax_y[1][1]])
-    dis_per_pix_x = (max_x - min_x) / w_x
-    dis_per_pix_y = (max_y - min_y) / w_y
-    dis_per_pix_z = (max_z - min_z) / h_x
+    pre_rd_x, pre_t_x = rp_ax["x"][0][0], rp_ax["x"][1][0]
+    pre_rd_y, pre_t_y = rp_ax["y"][0][0], rp_ax["y"][1][0]
+    pre_rd_z = np.mean([rp_ax["x"][0][1], rp_ax["y"][0][1]])
+    pre_t_z = np.mean([rp_ax["x"][1][1], rp_ax["y"][1][1]])
+    dis_per_pix_x = (max_x - min_x) / w["x"]
+    dis_per_pix_y = (max_y - min_y) / w["y"]
+    dis_per_pix_z = (max_z - min_z) / h["x"]
 
     # Calculate new x,y,z in global coordinate system
     rd_x = np.round(min_x + pre_rd_x * dis_per_pix_x, 2)
