@@ -3,6 +3,7 @@
 import argparse
 import ast
 import collections
+import copy
 import math
 import os
 import pathlib
@@ -31,6 +32,7 @@ def angle(v1, v2):
 # Click event to click points and draw red line in image window
 def click_event(event, x, y, flags, params):
     # Checking for left mouse clicks
+
     if event == cv2.EVENT_LBUTTONDOWN:
         # Displaying the coordinates
         # on the image window
@@ -47,9 +49,23 @@ def click_event(event, x, y, flags, params):
                 (0, 0, 255),
                 2,
             )
+
             cv2.setMouseCallback("check single pole", lambda *args: None)
 
         cv2.imshow("check single pole", img_single_axis)
+
+    elif event == cv2.EVENT_MOUSEMOVE:
+        if len(refPt) == 1:
+            temp_img = copy.deepcopy(img_single_axis)
+            cv2.line(
+                temp_img,
+                (refPt[0][0], refPt[0][1]),
+                (x, y),
+                (0, 0, 255),
+                1,
+            )
+
+            cv2.imshow("check single pole", temp_img)
 
 
 # Function to run the click event and return the clicked coordinates
