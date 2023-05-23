@@ -93,6 +93,9 @@ def run_click_event(in_file_ax, window_name="check single pole"):
     if k == 27:  # [esc]: escape the program
         cv2.destroyWindow("check single pole")
         return 0, 0, 0
+    elif k == 102 or k == 50:  # [f] or [2]: not a street light
+        cv2.destroyWindow("check single pole")
+        return -1, -1, -1
     elif k == 13 or k == 32:  # [space] or [enter]: fit is correct
         cv2.destroyWindow("check single pole")
         return width, height, refPt
@@ -120,10 +123,14 @@ def adjust_pole_statistics(in_folder, idx, obj):
     # Obtain new x,y,z in local coordinate system
     w_x, h_x, rp_ax_x = run_click_event(in_file_ax_x, f"Adjust pole {idx} (x)")
     if w_x == 0:  # check if program was escaped
-        return obj, True
+        return obj, True, 0
+    elif w_x == -1:  # check if not a clear street light
+        return obj, False, -2
     w_y, h_y, rp_ax_y = run_click_event(in_file_ax_y, f"Adjust pole {idx} (y)")
     if w_y == 0:  # check if program was escaped
-        return obj, True
+        return obj, True, 0
+    elif w_y == -1:  # check if not a clear street light
+        return obj, False, -2
 
     # Swap to bottom -> top point independent of click order
     rp_ax_x = rp_ax_x if rp_ax_x[0][1] < rp_ax_x[1][1] else [rp_ax_x[1], rp_ax_x[0]]
@@ -156,7 +163,7 @@ def adjust_pole_statistics(in_folder, idx, obj):
     obj.height = height
     obj.angle = pole_angle
 
-    return obj, False
+    return obj, False, 0
 
 
 # Function to calculate type probabilities
@@ -306,9 +313,12 @@ def adjust_fit(in_folder_imgs, out_file):
     while idx < len(df_poles_adjusted):
         if df_poles_adjusted.loc[idx, "code"] == 1:
             obj = df_poles_adjusted.iloc[idx]
-            obj, esc = adjust_pole_statistics(in_folder_imgs, idx, obj)
+            obj, esc, code = adjust_pole_statistics(in_folder_imgs, idx, obj)
             if esc is True:
                 return 0
+            elif code < 0:
+                df_poles_adjusted.loc[idx, "code"] = -2  # adjust label of not street lights
+                df_poles_adjusted.to_csv(out_file, index=False)
             else:
                 # Assign pole type probs using adjusted pole statistics and update pole in database
                 obj = get_pole_type_probs(type_classifier, obj)
