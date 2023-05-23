@@ -286,6 +286,8 @@ def validate_poles(in_folder_imgs, csv_poles, out_file):  # noqa: C901
         if idx < 0:
             idx = 0
 
+    print("There are no more poles to validate.")
+
 
 # Function to adjust fit of street light
 def adjust_fit(in_folder_imgs, out_file):
@@ -314,6 +316,8 @@ def adjust_fit(in_folder_imgs, out_file):
                 df_poles_adjusted.loc[idx, "code"] = 4  # adjust label of corrected poles
                 df_poles_adjusted.to_csv(out_file, index=False)
         idx += 1
+
+    print("There are no validated street lights that need correction.")
 
 
 # Function to validate pole type
@@ -388,6 +392,7 @@ def validate_type(in_folder_imgs, out_file):  # noqa: C901
         if back is False:
             i += 1
 
+    print("There are no more validated street lights that need type determination.")
     cv2.destroyWindow("check poles")
 
 
