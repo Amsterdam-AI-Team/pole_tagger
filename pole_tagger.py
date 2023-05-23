@@ -47,6 +47,7 @@ def click_event(event, x, y, flags, params):
                 (0, 0, 255),
                 2,
             )
+            cv2.setMouseCallback("check single pole", lambda *args: None)
 
         cv2.imshow("check single pole", img_single_axis)
 
