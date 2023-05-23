@@ -81,7 +81,7 @@ def run_click_event(in_file_ax, window_name="check single pole"):
         return width, height, refPt
     else:  # any other key: fit is incorrect, do refit
         cv2.destroyWindow("check single pole")
-        w, h, rp = run_click_event(in_file_ax)
+        w, h, rp = run_click_event(in_file_ax, window_name)
         return w, h, rp
 
 
@@ -107,6 +107,10 @@ def adjust_pole_statistics(in_folder, idx, obj):
     w_y, h_y, rp_ax_y = run_click_event(in_file_ax_y, f"Adjust pole {idx} (y)")
     if w_y == 0:  # check if program was escaped
         return obj, True
+
+    # Swap to bottom -> top point independent of click order
+    rp_ax_x = rp_ax_x if rp_ax_x[0][1] < rp_ax_x[1][1] else [rp_ax_x[1], rp_ax_x[0]]
+    rp_ax_y = rp_ax_y if rp_ax_y[0][1] < rp_ax_y[1][1] else [rp_ax_y[1], rp_ax_y[0]]
 
     # Calculate distance per pixel local coordinate system
     pre_rd_x, pre_t_x = rp_ax_x[0][0], rp_ax_x[1][0]
