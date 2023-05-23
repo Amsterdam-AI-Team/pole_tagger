@@ -194,7 +194,7 @@ def determine_pole_type(preds, obj):  # noqa: C901
                 return obj, False
             elif k == 3 or k == 83:  # [>]: go to next type
                 i += 1
-            elif k == 49:  # [1] type is unknown
+            elif k == 49 or k == 117:  # [1] or [u] type is unknown
                 obj["type"] = 99
                 cv2.destroyWindow("pole type")
                 return obj, False
