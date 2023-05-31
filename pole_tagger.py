@@ -170,8 +170,8 @@ def get_pole_type_probs(type_classifier, obj):
     X = np.array([obj[["height", "radius", "m_r", "m_g", "m_b"]]])
     probs = type_classifier.predict_proba(X)[0]
     idxs_probs = np.array(probs).argsort().tolist()[::-1]
-    obj["type_preds"] = idxs_probs
-    obj["type_probs"] = sorted(probs, reverse=True)
+    obj["type_preds"] = str(idxs_probs)
+    obj["type_probs"] = str(sorted(probs, reverse=True))
     return obj
 
 
@@ -410,7 +410,7 @@ if __name__ == "__main__":  # noqa: C901
     parser.add_argument("--adjust_fit", action="store_true", required=False)
     parser.add_argument("--validate_type", action="store_true", required=False)
     parser.add_argument("--input_file", type=str, default="data/csv_files/extracted_poles.csv")
-    parser.add_argument("--in_folder_images", type=str, default="data/images_objects")
+    parser.add_argument("--in_folder_images", type=str, default="data/images/objects/")
     args = parser.parse_args()
 
     if not args.validate_pole and not args.adjust_fit and not args.validate_type:
