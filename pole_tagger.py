@@ -71,7 +71,7 @@ def click_event(event, x, y, flags, params):
 # Function to run the click event and return the clicked coordinates
 def run_click_event(in_file_ax, window_name="check single pole"):
     cv2.namedWindow("check single pole")
-    cv2.moveWindow("check single pole", 250, 100)
+    cv2.moveWindow("check single pole", 450, 100)
     cv2.setWindowTitle("check single pole", window_name)
 
     global refPt, img_single_axis
@@ -80,8 +80,11 @@ def run_click_event(in_file_ax, window_name="check single pole"):
     # Reading the image
     img_single_axis = cv2.imread(in_file_ax)
     width, height = Image.open(in_file_ax).size
+    width, height = width * 1.5, height * 1.5
 
     # Displaying the image
+    hei, wid, _ = img_single_axis.shape
+    img_single_axis = cv2.resize(img_single_axis, (int(wid * 1.5), int(hei * 1.5)))
     cv2.imshow("check single pole", img_single_axis)
 
     # Setting mouse handler for the image
@@ -103,10 +106,10 @@ def run_click_event(in_file_ax, window_name="check single pole"):
 
 
 # Function to adjust red line if not correct
-def adjust_pole_statistics(in_folder, idx, obj):
+def adjust_pole_statistics(in_folder, img_number, obj):
     in_file_ax = {
         axis: str(
-            list(pathlib.Path(in_folder + f"object_per_axis/{axis}/").glob("{}_*".format(idx)))[0]
+            list(pathlib.Path(in_folder + f"object_per_axis/{axis}/").glob("{}_*".format(img_number)))[0]
         )
         for axis in ["x", "y"]
     }
@@ -122,7 +125,7 @@ def adjust_pole_statistics(in_folder, idx, obj):
     # Obtain new x,y,z in local coordinate system
     for axis in ["x", "y"]:
         w[axis], h[axis], temp_rp_ax = run_click_event(
-            in_file_ax[axis], f"Adjust pole {idx} ({axis})"
+            in_file_ax[axis], f"Adjust pole {img_number} ({axis})"
         )
         if w[axis] == 0:  # check if program was escaped
             return obj, True, 0
@@ -137,8 +140,8 @@ def adjust_pole_statistics(in_folder, idx, obj):
     # Calculate distance per pixel local coordinate system
     pre_rd_x, pre_t_x = rp_ax["x"][0][0], rp_ax["x"][1][0]
     pre_rd_y, pre_t_y = rp_ax["y"][0][0], rp_ax["y"][1][0]
-    pre_rd_z = np.mean([rp_ax["x"][0][1], rp_ax["y"][0][1]])
-    pre_t_z = np.mean([rp_ax["x"][1][1], rp_ax["y"][1][1]])
+    pre_rd_z = np.mean([rp_ax["x"][1][1], rp_ax["y"][1][1]])
+    pre_t_z = np.mean([rp_ax["x"][0][1], rp_ax["y"][0][1]])
     dis_per_pix_x = (max_x - min_x) / w["x"]
     dis_per_pix_y = (max_y - min_y) / w["y"]
     dis_per_pix_z = (max_z - min_z) / h["x"]
@@ -244,14 +247,14 @@ def validate_poles(in_folder_imgs, csv_poles, out_file):  # noqa: C901
     while idx < len(df_poles):
         obj = df_poles.iloc[idx]
         if df_poles_adjusted.loc[idx, "code"] == -1:
-            img_name = in_folder_imgs + "object_all_axes/" + str(idx) + ".png"
+            img_number = str(df_poles_adjusted.loc[idx, 'index'])
+            img_name = in_folder_imgs + "object_all_axes/" + img_number + ".png"
 
             # Load segmentation example
             if os.path.exists(img_name):
                 img = cv2.imread(img_name)
-                # img = cv2.resize(img, (900, 400))
-                cv2.moveWindow("check poles", 550, 100)
-                cv2.setWindowTitle("check poles", f"Check pole {idx}")
+                cv2.moveWindow("check poles", 275, 100)
+                cv2.setWindowTitle("check poles", f"Check pole {img_number}")
                 cv2.imshow("check poles", img)
 
                 # The function waitKey waits for a key event infinitely (when delay<=0)
@@ -311,7 +314,8 @@ def adjust_fit(in_folder_imgs, out_file):
     while idx < len(df_poles_adjusted):
         if df_poles_adjusted.loc[idx, "code"] == 1:
             obj = df_poles_adjusted.iloc[idx]
-            obj, esc, code = adjust_pole_statistics(in_folder_imgs, idx, obj)
+            img_number = df_poles_adjusted.loc[idx, 'index']
+            obj, esc, code = adjust_pole_statistics(in_folder_imgs, img_number, obj)
             if esc is True:
                 return 0
             elif code < 0:
@@ -409,7 +413,7 @@ if __name__ == "__main__":  # noqa: C901
     parser.add_argument("--validate_pole", action="store_true", required=False)
     parser.add_argument("--adjust_fit", action="store_true", required=False)
     parser.add_argument("--validate_type", action="store_true", required=False)
-    parser.add_argument("--input_file", type=str, default="data/csv_files/extracted_poles.csv")
+    parser.add_argument("--input_file", type=str, default="data/csv_files/poles_extracted_amsterdam_oost_part_1.csv")
     parser.add_argument("--in_folder_images", type=str, default="data/images/objects/")
     args = parser.parse_args()
 
