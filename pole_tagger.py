@@ -247,7 +247,7 @@ def validate_poles(in_folder_imgs, csv_poles, out_file):  # noqa: C901
     while idx < len(df_poles):
         obj = df_poles.iloc[idx]
         if df_poles_adjusted.loc[idx, "code"] == -1:
-            img_number = str(df_poles_adjusted.loc[idx, 'index'])
+            img_number = str(df_poles_adjusted.loc[idx, 'identifier'])
             img_name = in_folder_imgs + "object_all_axes/" + img_number + ".png"
 
             # Load segmentation example
@@ -314,7 +314,7 @@ def adjust_fit(in_folder_imgs, out_file):
     while idx < len(df_poles_adjusted):
         if df_poles_adjusted.loc[idx, "code"] == 1:
             obj = df_poles_adjusted.iloc[idx]
-            img_number = df_poles_adjusted.loc[idx, 'index']
+            img_number = df_poles_adjusted.loc[idx, 'identifier']
             obj, esc, code = adjust_pole_statistics(in_folder_imgs, img_number, obj)
             if esc is True:
                 return 0
